@@ -15,15 +15,17 @@
     --background-end-rgb: 0, 0, 0;
   }
 }
-
+.btnStyle {
+  @apply rounded-lg px-5 py-3 text-sm flex justify-center items-center space-x-2 bg-red-200 text-black hover:bg-red-700/70 cursor-pointer hover:text-gray-300 transition-all duration-200 ease-out;
+}
 body {
-  color: rgb(var(--foreground-rgb));
+  /* color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
       transparent,
       rgb(var(--background-end-rgb))
     )
-    rgb(var(--background-start-rgb));
+    rgb(var(--background-start-rgb)); */
 }
 
 @layer utilities {
