@@ -4,16 +4,34 @@ import NewSession from "./NewSession";
 import ChatHistory from "./ChatHistory";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
+import { useCollection } from "react-firebase-hooks/firestore";
+import { collection, orderBy, query } from "firebase/firestore";
+import { db } from "@/firebase";
+import SessionRow from "./SessionRow";
 function Sidebar() {
   const { data: session } = useSession();
+  // const [chats, loading, error] = useCollection(
+  //   session && collection(db, "users", session?.user?.email!, "chats")
+  // );
+  const [chats, loading, error] = useCollection(
+    session &&
+      query(
+        collection(db, "users", session?.user?.email!, "chats"),
+        orderBy("createdAt", "asc")
+      )
+  );
+  console.log(chats);
 
-  console.log(session);
   return (
     <div className="flex flex-col h-screen p-2">
       <div className="flex-1">
         <div>
           {/* NewChat */}
           <NewSession />
+
+          {chats?.docs.map((chat) => (
+            <SessionRow key={chat.id} id={chat.id} />
+          ))}
 
           <div className="fles flex-col space-y-2 my-2">
             <ChatHistory />

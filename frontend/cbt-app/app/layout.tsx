@@ -8,6 +8,7 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import Login from "@/components/Login";
 import { useSession } from "next-auth/react";
 import { SessionCheck } from "@/components/SessionCheck";
+import ToastProvider from "@/components/ToastProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,7 +34,8 @@ export default async function RootLayout({
             <div className="max-w-xs h-screen overflow-y-auto md:min-w-[20rem]">
               <Sidebar />
             </div>
-            {/* clientProvider Notification */}
+            {/* ToastProvider Notification */}
+            <ToastProvider />
             <div className="flex-1 bg-gradient-to-bl from-white to-red-500">
               <SessionCheck>{children}</SessionCheck>
             </div>
