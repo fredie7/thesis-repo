@@ -9,6 +9,9 @@ import Login from "@/components/Login";
 import { useSession } from "next-auth/react";
 import { SessionCheck } from "@/components/SessionCheck";
 import ToastProvider from "@/components/ToastProvider";
+import { Provider } from "react-redux";
+import Providers from "./Providers";
+import Sidebars from "./Sidebars";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,23 +28,29 @@ export default async function RootLayout({
   // const session = await getServerSession(authOptions); // Comment this out or remove it
 
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <SessionProvider>
-          <div className="flex">
-            {/* header */}
-            {/* sidebar */}
-            <div className="max-w-xs h-screen overflow-y-auto md:min-w-[20rem]">
-              <Sidebar />
+    <Providers>
+      <html lang="en">
+        <body className={inter.className}>
+          <SessionProvider>
+            <div className="flex">
+              {/* header */}
+              {/* sidebar */}
+              {/* <Sidebars>
+                <Sidebar />
+              </Sidebars> */}
+              <div className="max-w-xs h-screen overflow-y-auto md:min-w-[20rem]">
+                {/* <div className="hidden md:flex max-w-xs h-screen overflow-y-auto md:min-w-[20rem]"> */}
+                <Sidebar />
+              </div>
+              {/* ToastProvider Notification */}
+              <ToastProvider />
+              <div className="flex-1 bg-gradient-to-bl from-white to-red-500">
+                <SessionCheck>{children}</SessionCheck>
+              </div>
             </div>
-            {/* ToastProvider Notification */}
-            <ToastProvider />
-            <div className="flex-1 bg-gradient-to-bl from-white to-red-500">
-              <SessionCheck>{children}</SessionCheck>
-            </div>
-          </div>
-        </SessionProvider>
-      </body>
-    </html>
+          </SessionProvider>
+        </body>
+      </html>
+    </Providers>
   );
 }

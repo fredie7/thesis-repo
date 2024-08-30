@@ -8,8 +8,13 @@ import { useCollection } from "react-firebase-hooks/firestore";
 import { collection, orderBy, query } from "firebase/firestore";
 import { db } from "@/firebase";
 import SessionRow from "./SessionRow";
+import { useSelector } from "react-redux";
 function Sidebar() {
   const { data: session } = useSession();
+  const sidebarVisible = useSelector(
+    (state: any) => state.toggle.sidebarVisible
+  );
+  console.log("sidebarVisible===>>s", sidebarVisible);
   // const [chats, loading, error] = useCollection(
   //   session && collection(db, "users", session?.user?.email!, "chats")
   // );
@@ -32,10 +37,6 @@ function Sidebar() {
           {chats?.docs.map((chat) => (
             <SessionRow key={chat.id} id={chat.id} />
           ))}
-
-          <div className="fles flex-col space-y-2 my-2">
-            <ChatHistory />
-          </div>
         </div>
       </div>
       {session && (

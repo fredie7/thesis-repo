@@ -55,7 +55,7 @@ function SessionRow({ id }: Props) {
       </p>
       <Trash2
         onClick={removeChat}
-        className="h-5 w-5 text-gray-700 hover:text-red-700"
+        className="h-5 w-5 text-gray-900 hover:text-red-700"
       />
     </Link>
   );

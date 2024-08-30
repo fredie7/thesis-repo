@@ -18,6 +18,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase";
 import ThreeDots from "react-loading-icons/dist/esm/components/three-dots";
+import Header from "@/components/Header";
 
 type Props = {
   params: {
@@ -148,71 +149,68 @@ function Therapy({ params: { id } }: Props) {
   }, [session?.user?.email!, id]);
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
-      <div className="flex-1 overflow-auto p-2">
-        {chatHistory.length === 0 ? (
-          <>
-            <p className="text-center">
-              Ask me anything concerning your Mental Health Challenge
-            </p>
-            <p className="text-center">
-              Ask me anything concerning your Mental Health Challenge
-            </p>
-            <p className="text-center">
-              Ask me anything concerning your Mental Health Challenge
-            </p>
-          </>
-        ) : (
-          chatHistory.map((item, index) => (
-            <div key={index}>
-              <div className="flex justify-end space-x-3 mt-6">
-                <div className="flex-shrink-0">
-                  <UserProfileImage src={session?.user?.image} />
+    <>
+      <div className="flex flex-col h-screen overflow-hidden">
+        <Header />
+        <div className="flex-1 overflow-auto p-2">
+          {chatHistory.length === 0 ? (
+            <>
+              <p className="text-center">
+                Ask me anything concerning your Mental Health Challenge
+              </p>
+            </>
+          ) : (
+            chatHistory.map((item, index) => (
+              <div key={index}>
+                <div className="flex justify-end space-x-3 mt-6">
+                  <div className="flex-shrink-0">
+                    <UserProfileImage src={session?.user?.image} />
+                  </div>
+                  <div className="bg-stone-500 text-white p-3 rounded-lg max-w-xs shadow">
+                    {item.question}
+                  </div>
                 </div>
-                <div className="bg-stone-500 text-white p-3 rounded-lg max-w-xs shadow">
-                  {item.question}
-                </div>
+                {/* AI's Message */}
+                {item.answer !== null && (
+                  <div className="flex justify-start space-x-3 mt-4">
+                    <div className="flex-shrink-0 mt-6">
+                      <UserProfileImage src={img3} />
+                    </div>
+                    <div className="bg-gray-300 text-black p-3 rounded-lg max-w-xs shadow border">
+                      {item.answer}
+                    </div>
+                  </div>
+                )}
               </div>
-              {/* AI's Message */}
-              {item.answer !== null && (
-                <div className="flex justify-start space-x-3 mt-4">
-                  <div className="flex-shrink-0 mt-6">
-                    <UserProfileImage src={img3} />
-                  </div>
-                  <div className="bg-gray-300 text-black p-3 rounded-lg max-w-xs shadow border">
-                    {item.answer}
-                  </div>
-                </div>
-              )}
-            </div>
-          ))
-        )}
-        {loading && (
-          <p className="text-center text-blue-500">
-            <ThreeDots />
-          </p>
-        )}
-      </div>
+            ))
+          )}
+          {loading && (
+            <p className="text-center text-blue-500">
+              <ThreeDots />
+            </p>
+          )}
+        </div>
 
-      <div className="bg-white text-black text-sm">
-        <form className="p-5 space-x-5 flex" onSubmit={handleChat}>
-          <input
-            className="bg-transparent focus:outline-none flex-1 disabled:cursor-not-allowed disabled:text-gray-300 disabled:{!session}"
-            type="text"
-            onChange={(e) => setQuestion(e.target.value)}
-            value={question}
-            placeholder="Type your message here..."
-          />
-          <button
-            type="submit"
-            disabled={!session || !question}
-            className="bg-red-900 hover:opacity-50 text-white font-bold px-4 py-2 rounded disabled:bg-gray-300 disabled:cursor-not-allowed"
-          >
-            <SendHorizonal className="h-4 w-4 -rotate-45" />
-          </button>
-        </form>
+        <div className="bg-white text-black text-sm">
+          <form className="p-5 space-x-5 flex" onSubmit={handleChat}>
+            <input
+              className="bg-transparent focus:outline-none flex-1 disabled:cursor-not-allowed disabled:text-gray-300 disabled:{!session}"
+              type="text"
+              onChange={(e) => setQuestion(e.target.value)}
+              value={question}
+              placeholder="Type your message here..."
+            />
+            <button
+              type="submit"
+              disabled={!session || !question}
+              className="bg-red-900 hover:opacity-50 text-white font-bold px-4 py-2 rounded disabled:bg-gray-300 disabled:cursor-not-allowed"
+            >
+              <SendHorizonal className="h-4 w-4 -rotate-45" />
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

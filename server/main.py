@@ -17,6 +17,7 @@ from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 
 import os
+import re
 
 
 # Load environment variables
@@ -66,8 +67,14 @@ vector = ObjectBox.from_documents(documents, OpenAIEmbeddings(), embedding_dimen
 # Set up retriever and document chain
 retriever = vector.as_retriever()
 
-prompt = ChatPromptTemplate.from_template("""
+sample_propmts = """
 Answer the following question based on the provided context. Think step by step before providing a detailed answer.
+
+Answer the following question based on the provided and historic context. Make answerss short but detailed.
+"""
+
+prompt = ChatPromptTemplate.from_template("""
+Answer the following question based on the provided context and historic chat context. Make answers short.
 <context>
 {context}
 </context>
@@ -79,7 +86,12 @@ document_chain = create_stuff_documents_chain(llm, prompt)
 
 retrieval_chain = create_retrieval_chain(retriever, document_chain)
 
-# # Define API endpoint
+def clean_response(response: str) -> str:
+    # Remove multiple newlines and spaces
+    cleaned = re.sub(r'\s+', ' ', response).strip()
+    # Remove non-alphabetical characters (optional, depends on what you want to clean)
+    cleaned = re.sub(r'[^a-zA-Z0-9,.!? ]', '', cleaned)
+    return cleaned
 
 
 # Define API endpoint
@@ -88,7 +100,6 @@ async def ask_question(request: QuestionRequest):
     try:
         # Perform retrieval and return the result
         res = retrieval_chain.invoke({"input": request.question})
-        return {"answer": res['answer']}
+        return {"answer": clean_response(res['answer'])}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
