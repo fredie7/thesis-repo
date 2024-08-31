@@ -51,7 +51,7 @@ function Therapy({ params: { id } }: Props) {
     );
   };
 
-  const handleChat = async (e: FormEvent<HTMLFormElement>) => {
+  async function handleChat(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const currentQuestion = question;
     console.log("currentQuestion===>>", question);
@@ -61,9 +61,11 @@ function Therapy({ params: { id } }: Props) {
 
     setLoading(true); // Start loading
 
+    let docRef; // Declare docRef here to make it accessible in the catch block
+
     try {
       // Store the question in Firestore with a placeholder for the answer
-      const docRef = await addDoc(
+      docRef = await addDoc(
         collection(db, "users", session?.user?.email!, "chats", id, "messages"),
         {
           question: currentQuestion,
@@ -86,7 +88,8 @@ function Therapy({ params: { id } }: Props) {
       }
 
       const data = await response.json();
-      const newAnswer = data.answer;
+      console.log("DATA=====>>", data.response);
+      const newAnswer = data.response;
 
       // Update the existing document in Firestore with the answer
       await updateDoc(
@@ -108,26 +111,28 @@ function Therapy({ params: { id } }: Props) {
       console.error("Error fetching data:", error);
 
       // Handle error by updating the document with an error message
-      await updateDoc(
-        doc(
-          db,
-          "users",
-          session?.user?.email!,
-          "chats",
-          id,
-          "messages",
-          docRef.id
-        ),
-        {
-          answer: "There was an error processing your request.",
-          timestamp: new Date(),
-        }
-      );
+      if (docRef) {
+        await updateDoc(
+          doc(
+            db,
+            "users",
+            session?.user?.email!,
+            "chats",
+            id,
+            "messages",
+            docRef.id
+          ),
+          {
+            answer: "There was an error processing your request.",
+            timestamp: new Date(),
+          }
+        );
+      }
     } finally {
       setLoading(false); // Stop loading
     }
-  };
-
+  }
+  console.log("CHATHISTORY DATA===>>>", chatHistory);
   useEffect(() => {
     const q = query(
       collection(db, "users", session?.user?.email!, "chats", id, "messages"),

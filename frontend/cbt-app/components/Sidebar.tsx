@@ -28,7 +28,7 @@ function Sidebar() {
   console.log(chats);
 
   return (
-    <div className="flex flex-col h-screen p-2">
+    <div className="flex flex-col h-screen p-2 bg-gray-100">
       <div className="flex-1">
         <div>
           {/* NewChat */}
@@ -39,16 +39,21 @@ function Sidebar() {
           ))}
         </div>
       </div>
-      {session && (
+
+      {session ? (
         <div className="mx-auto mb-2">
           <Image
             onClick={() => signOut()}
             className="rounded-full cursor-pointer hover:opacity-50"
             src={session.user?.image!}
             alt="User's profile picture"
-            width={50} // Set your desired width
-            height={50} // Set your desired height
+            width={50}
+            height={50}
           />
+        </div>
+      ) : (
+        <div className="flex items-center justify-center text-red-900 font-extrabold">
+          MED-45 AI
         </div>
       )}
     </div>

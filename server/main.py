@@ -1,52 +1,97 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
+load_dotenv()
+
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_community.document_loaders import WebBaseLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import FAISS
-from langchain_openai import ChatOpenAI
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
-from langchain.chains import RetrievalQA
-from langchain import hub
-from langchain.chains import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_openai import ChatOpenAI
-
-from dotenv import load_dotenv
-
-import os
-import re
-
-
-# Load environment variables
-load_dotenv()
-os.environ['OPENAI_API_KEY'] = os.getenv("OPENAI_API_KEY")
-
-from langchain_objectbox.vectorstores import ObjectBox
 from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores.faiss import FAISS
+from langchain.chains import create_retrieval_chain
+from langchain_core.prompts import MessagesPlaceholder
+from langchain_core.messages import HumanMessage, AIMessage
+from langchain.chains.history_aware_retriever import create_history_aware_retriever
 
-# Initialize FastAPI
+# Define the FastAPI app
 app = FastAPI()
 
-# Enable CORS for specific origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://your-frontend-domain.com"],  # List of allowed origins
+    allow_origins=["http://localhost:3000", "https://my-frontend-domain.com"],  # List of allowed origins
     allow_credentials=True,
     allow_methods=["*"],  # Allows all HTTP methods
     allow_headers=["*"],  # Allows all headers
 )
-
-# Define Pydantic model for the request body
-class QuestionRequest(BaseModel):
+# Define the request model
+class ChatRequest(BaseModel):
     question: str
 
+# Information retrieval from the web
+def extract_web_info(urls):
+    documents = []
+    for url in urls:
+        loader = WebBaseLoader(url)
+        documents.extend(loader.load())
     
+    split_docs = RecursiveCharacterTextSplitter(
+        chunk_size=300,
+        chunk_overlap=20
+    )
+    splitDocs = split_docs.split_documents(documents)
+    return splitDocs
 
-# Load documents from the web
-loader = WebBaseLoader([
+# Create the vector store from documents
+def create_vector_store(documents):
+    embedding = OpenAIEmbeddings()
+    vectorStore = FAISS.from_documents(documents, embedding=embedding)
+    return vectorStore
+
+# Create the chain for processing user queries
+def create_recurring_chain(vectorStore):
+    model = ChatOpenAI(
+        model="gpt-4o",
+        temperature=0
+    )
+
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", "Answer the user's questions based on the context and make the answer short: {context}"),
+        MessagesPlaceholder(variable_name="chat_history"),
+        ("user", "{input}")
+    ])
+
+    chain = create_stuff_documents_chain(
+        llm=model,
+        prompt=prompt
+    )
+
+    retriever = vectorStore.as_retriever(search_kwargs={"k": 3})
+
+    retriever_prompt = ChatPromptTemplate.from_messages([
+        MessagesPlaceholder(variable_name="chat_history"),
+        ("user", "{input}"),
+        ("user", "Given the above conversation, generate a search query to get information relevant to the conversation.Make the answer short")
+    ])
+    history_aware_retriever = create_history_aware_retriever(
+        llm=model,
+        retriever=retriever,
+        prompt=retriever_prompt
+    )
+
+    retrieval_chain = create_retrieval_chain(
+        history_aware_retriever,
+        chain
+    )
+
+    return retrieval_chain
+
+# Initialize the documents and chain globally
+urls = [
     "https://www.verywellmind.com/what-is-cognitive-behavior-therapy-2795747",
     "https://en.wikipedia.org/wiki/Coping",
     "https://www.ncbi.nlm.nih.gov/books/NBK279297/",
@@ -54,52 +99,37 @@ loader = WebBaseLoader([
     "https://www.psychologytoday.com/intl/basics/cognitive-behavioral-therapy",
     "https://www.ncbi.nlm.nih.gov/books/NBK470241/",
     "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8489050/"
-])
+]
 
-web_content_list = loader.load()
+documents = extract_web_info(urls)
+vectorStore = create_vector_store(documents)
+chain = create_recurring_chain(vectorStore)
 
-text_splitter = RecursiveCharacterTextSplitter()
-documents = text_splitter.split_documents(web_content_list)
+# Initialize chat history
+chat_history = []
 
-# Initialize vector store
-vector = ObjectBox.from_documents(documents, OpenAIEmbeddings(), embedding_dimensions=768)
-
-# Set up retriever and document chain
-retriever = vector.as_retriever()
-
-sample_propmts = """
-Answer the following question based on the provided context. Think step by step before providing a detailed answer.
-
-Answer the following question based on the provided and historic context. Make answerss short but detailed.
-"""
-
-prompt = ChatPromptTemplate.from_template("""
-Answer the following question based on the provided context and historic chat context. Make answers short.
-<context>
-{context}
-</context>
-Question: {input}
-""")
-
-llm = ChatOpenAI(model="gpt-4o", temperature=0)
-document_chain = create_stuff_documents_chain(llm, prompt)
-
-retrieval_chain = create_retrieval_chain(retriever, document_chain)
-
-def clean_response(response: str) -> str:
-    # Remove multiple newlines and spaces
-    cleaned = re.sub(r'\s+', ' ', response).strip()
-    # Remove non-alphabetical characters (optional, depends on what you want to clean)
-    cleaned = re.sub(r'[^a-zA-Z0-9,.!? ]', '', cleaned)
-    return cleaned
-
-
-# Define API endpoint
 @app.post("/ask")
-async def ask_question(request: QuestionRequest):
+async def chat(request: ChatRequest):
+    global chat_history
+    question = request.question
+    
+    # Process the chat and return the response
     try:
-        # Perform retrieval and return the result
-        res = retrieval_chain.invoke({"input": request.question})
-        return {"answer": clean_response(res['answer'])}
+        response = chain.invoke({
+            "chat_history": chat_history,
+            "input": question,
+        })
+        answer = response["answer"]
+        
+        # Update chat history
+        chat_history.append(HumanMessage(content=question))
+        chat_history.append(AIMessage(content=answer))
+        
+        return {"response": answer}
+    
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

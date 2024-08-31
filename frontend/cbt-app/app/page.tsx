@@ -54,7 +54,7 @@ export default function Home() {
       <Header />
       <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-bl from-white to-red-500 p-4">
         <div className="max-auto max-w-2xl sm:text-center">
-          <h2 className=" font-semibold leading-9 text-red-900  mt-11">
+          <h2 className=" font-semibold leading-9 text-red-900 mt-11 text-center">
             MED-45 AI - Cognitive Behaviral Therapy
           </h2>
         </div>
@@ -68,7 +68,7 @@ export default function Home() {
         </p>
         <div className="flex justify-center items-center mt-4">
           <div className="bg-gray-700 border btnStyle text-white p-2 rounded-md cursor-pointer">
-            <p>GET STARTED</p>
+            <p className="uppercase">Explore Miscellaneous Incentitives:</p>
           </div>
         </div>
 

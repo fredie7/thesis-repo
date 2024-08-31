@@ -35,9 +35,7 @@ export default async function RootLayout({
             <div className="flex">
               {/* header */}
               {/* sidebar */}
-              {/* <Sidebars>
-                <Sidebar />
-              </Sidebars> */}
+              {/* <Sidebars>{children}</Sidebars> */}
               <div className="max-w-xs h-screen overflow-y-auto md:min-w-[20rem]">
                 {/* <div className="hidden md:flex max-w-xs h-screen overflow-y-auto md:min-w-[20rem]"> */}
                 <Sidebar />

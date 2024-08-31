@@ -18,7 +18,10 @@ function Header() {
     <div className="flex items-center justify-between p-4 bg-gray-200 border-b sticky top-0 z-20">
       {/* Menu icon visible only on mobile */}
       <div className="flex items-center">
-        <Menu onClick={handleMenuClick} />
+        {/* <Menu onClick={handleMenuClick} /> */}
+        <div className="flex items-center justify-center text-red-900 font-extrabold">
+          MED-45 AI
+        </div>
       </div>
 
       {/* Right side buttons */}
