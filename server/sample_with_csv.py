@@ -68,27 +68,11 @@ def create_recurring_chain(vectorStore):
 
     prompt = ChatPromptTemplate.from_messages([
     ("user", (
-        "Answer the user's questions based on the context and make the answer short"
-        "Given the mental health situation of the patient, our task is to:\n"
-        "1. Identify if there is cognitive thinking distortion in the patient's text.\n"
-        "2. Please first answer: Is there cognitive distortion in the thinking of the patient? "
-        "identify the top 2 possible cognitive distortions: \n' or 'No, I do not identify any possible cognitive distortion in this patient"
-        
-        "Then, start the first identified cognitive distortion on a new line, followed by a colon and an explanation in one or two sentences.\n"
-        
-        "Start the second identified cognitive distortion on a new line as well, followed by a colon and an explanation in one or two sentences.\n"
-        
-        "Here we consider the following top 10 common thinking distortions in the order of:\n"
-        "Personalization: Personalizing or taking up the blame for a situation that in reality involved many factors and was out of the person’s control, e.g., 'My son is pretty quiet today. I wonder what I did to upset him.'\n"
-        "Mind Reading: Suspecting what others are thinking or what are the motivations behind their actions, e.g., 'My house was dirty when my friends came over, they must think I’m a slob!'\n"
-        "Overgeneralization: Major conclusions are drawn based on limited information, e.g., 'Last time I was in the pool I almost drowned so I am a terrible swimmer and should not go into the water again.'\n"
-        "All-or-nothing thinking: Looking at a situation as either black or white or thinking that there are only two possible outcomes to a situation, e.g., 'If I cannot get my Ph.D. then I am a total failure.'\n"
-        "Emotional reasoning: Letting one’s feeling about something overrule facts to the contrary, e.g., 'Even though Steve is here at work late every day I know I work harder than anyone else at my job.'\n"
-        "Labeling: Giving someone or something a label without finding out more about it/them, e.g., 'My daughter would never do anything I disapproved of.'\n"
-        "Magnification: Emphasizing the negative or playing down the positive of a situation, e.g., 'My professor said he made some corrections on my paper so I know I’ll probably fail the class.'\n"
-        "Mental filter: Placing all one’s attention or seeing only the negatives of a situation, e.g., 'My husband says he wishes I was better at housekeeping so I must be a lousy wife.'\n"
-        "Should statements: Should statements appear as a list of ironclad rules about how a person should behave, e.g., 'I should get all A’s to be a good student.'\n"
-        "Fortune-telling: This distortion is about expecting things to happen a certain way or assuming that things will go badly, e.g., 'I was afraid of job interviews so I decided to start my own thing.'\n"
+        "Given the above conversation, generate a search query to get information relevant to the conversation. "
+        "Answer the patient's questions based on the context and make the answer short. Given the mental health "
+        "situation of the patient, our task is to:\n"
+        "First, Identify if there is cognitive thinking distortion in the patient's text.\n"
+        "If you found any, name the top 2 and give explanation"        
         "{context}"
     )),
     MessagesPlaceholder(variable_name="chat_history"),

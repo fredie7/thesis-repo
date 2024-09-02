@@ -68,16 +68,16 @@ def create_recurring_chain(vectorStore):
 
     prompt = ChatPromptTemplate.from_messages([
     ("user", (
-        "Answer the user's questions based on the context and make the answer short"
-        "Given the mental health situation of the patient, our task is to:\n"
+        "Given the above conversation, generate a search query to get information relevant to the conversation. "
+        "Answer the patient's questions based on the context and make the answer short. Given the mental health "
+        "situation of the patient, our task is to:\n"
         "1. Identify if there is cognitive thinking distortion in the patient's text.\n"
         "2. Please first answer: Is there cognitive distortion in the thinking of the patient? "
-        "identify the top 2 possible cognitive distortions: \n' or 'No, I do not identify any possible cognitive distortion in this patient"
-        
+        "identify the top 2 possible cognitive distortions: \n' or 'No, I do not identify "
+        "possible cognitive distortion: \n'.\n"
         "Then, start the first identified cognitive distortion on a new line, followed by a colon and an explanation in one or two sentences.\n"
-        
         "Start the second identified cognitive distortion on a new line as well, followed by a colon and an explanation in one or two sentences.\n"
-        
+        "Recognize the specific types of cognitive distortion in the patient's thought process.\n"
         "Here we consider the following top 10 common thinking distortions in the order of:\n"
         "Personalization: Personalizing or taking up the blame for a situation that in reality involved many factors and was out of the person’s control, e.g., 'My son is pretty quiet today. I wonder what I did to upset him.'\n"
         "Mind Reading: Suspecting what others are thinking or what are the motivations behind their actions, e.g., 'My house was dirty when my friends came over, they must think I’m a slob!'\n"
