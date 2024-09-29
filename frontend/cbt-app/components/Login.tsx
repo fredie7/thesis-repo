@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 
 function Login() {
   const { data: session } = useSession();
-  //   console.log(session);
+  console.log("SESSION===>>>", session);
   !session ? console.log("no session") : console.log("session");
   return (
     <div className="bg-white h-screen flex flex-col justify-center items-center text-center">

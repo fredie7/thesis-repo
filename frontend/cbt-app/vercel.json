@@ -1,0 +1,9 @@
+{
+    "rewrites": [
+      {
+        "source": "/ask",
+        "destination": "http://100.27.241.218/ask"
+      }
+    ]
+  }
+  

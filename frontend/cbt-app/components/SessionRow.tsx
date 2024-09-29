@@ -45,12 +45,11 @@ function SessionRow({ id }: Props) {
         {/* {messages?.docs[messages?.docs.length - 1]?.data().text ||
           "New Messages"} */}
         {messages && messages.docs.length > 0
-          ? messages.docs.map((msg) =>
-              msg?._document?.data?.value?.mapValue?.fields?.answer?.stringValue
-                ?.split(" ")
-                ?.slice(0, 3)
-                ?.join(" ")
-            )
+          ? messages.docs.map((msg) => {
+              const data = msg.data(); // Use the `data()` method to get document data
+              const answer = data?.answer || ""; // Safely access the `answer` field
+              return answer.split(" ").slice(0, 3).join(" ");
+            })
           : "New Chat"}
       </p>
       <Trash2

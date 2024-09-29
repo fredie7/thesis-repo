@@ -46,7 +46,16 @@ function Therapy({ params: { id } }: Props) {
   const UserProfileImage = ({ src }: UserProfileImageProps) => {
     return (
       <div className="relative h-12 w-12 rounded-full overflow-hidden border border-gray-300">
-        <Image src={src} alt="User Profile" layout="fill" objectFit="cover" />
+        {src ? (
+          <Image src={src} alt="User Profile" layout="fill" objectFit="cover" />
+        ) : (
+          <Image
+            src="/default-profile.png"
+            alt="Default Profile"
+            layout="fill"
+            objectFit="cover"
+          />
+        )}
       </div>
     );
   };
@@ -75,7 +84,8 @@ function Therapy({ params: { id } }: Props) {
       );
 
       // Fetch the answer from your backend
-      const response = await fetch("http://127.0.0.1:8000/ask", {
+      // const response = await fetch("http://127.0.0.1:8000/ask", {
+      const response = await fetch("http://100.27.241.218:80/ask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -133,25 +143,24 @@ function Therapy({ params: { id } }: Props) {
     }
   }
   console.log("CHATHISTORY DATA===>>>", chatHistory);
+  const sessionEmail = session && session?.user?.email;
   useEffect(() => {
     const q = query(
       collection(db, "users", session?.user?.email!, "chats", id, "messages"),
-      orderBy("timestamp", "asc") // Ensure the messages are in the correct order
+      orderBy("timestamp", "asc")
     );
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const messages: ChatEntry[] = [];
-
-      let newAnswerCount = 0;
-
       querySnapshot.forEach((doc) => {
         messages.push(doc.data() as ChatEntry);
       });
       setChatHistory(messages);
     });
+
     // Cleanup the listener on unmount
     return () => unsubscribe();
-  }, [session?.user?.email!, id]);
+  }, [session?.user?.email, id]); // Include 'id' here
 
   return (
     <>
@@ -169,7 +178,7 @@ function Therapy({ params: { id } }: Props) {
               <div key={index}>
                 <div className="flex justify-end space-x-3 mt-6">
                   <div className="flex-shrink-0">
-                    <UserProfileImage src={session?.user?.image} />
+                    <UserProfileImage src={session?.user?.image ?? ""} />
                   </div>
                   <div className="bg-stone-500 text-white p-3 rounded-lg max-w-xs shadow">
                     {item.question}
