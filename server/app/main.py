@@ -31,7 +31,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://my-frontend-domain.com"],  # List of allowed origins
+    allow_origins=["http://localhost:3000", "https://cdd-app.vercel.app"],  # List of allowed origins
     allow_credentials=True,
     allow_methods=["*"],  # Allows all HTTP methods
     allow_headers=["*"],  # Allows all headers

@@ -42,14 +42,17 @@ function SessionRow({ id }: Props) {
       <MessageSquareDot className="h-5 w-5 " />
 
       <p className="flex-1 hidden md:inline-flex truncate">
-        {/* {messages?.docs[messages?.docs.length - 1]?.data().text ||
-          "New Messages"} */}
         {messages && messages.docs.length > 0
-          ? messages.docs.map((msg) => {
-              const data = msg.data(); // Use the `data()` method to get document data
-              const answer = data?.answer || ""; // Safely access the `answer` field
-              return answer.split(" ").slice(0, 3).join(" ");
-            })
+          ? messages.docs
+              .map((msg) => {
+                const data = msg.data(); // Use the `data()` method to get document data
+                const answer = data?.answer; // Safely access the `answer` field
+                // Ensure answer is a string before calling split
+                return typeof answer === "string"
+                  ? answer.split(" ").slice(0, 3).join(" ")
+                  : "No answer"; // Fallback if answer is not a string
+              })
+              .join(", ") // Join results to display them correctly
           : "New Chat"}
       </p>
       <Trash2
