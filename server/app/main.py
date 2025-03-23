@@ -21,8 +21,9 @@ import os
 
 load_dotenv()
 
-# openai_api_key = os.getenv("OPENAI_API_KEY")
-openai_api_key = "sk-8Bv-4-O3hQN4NG3RwZZNdtS2M36h4vwboVyU69Rnt2T3BlbkFJQLEyYHSZwTpbVwgzcnn1alc0vILfEOrIlNPUXisIQA"
+openai_api_key = os.getenv("OPENAI_API_KEY")
+# openai_api_key = "sk-8Bv-4-O3hQN4NG3RwZZNdtS2M36h4vwboVyU69Rnt2T3BlbkFJQLEyYHSZwTpbVwgzcnn1alc0vILfEOrIlNPUXisIQA"
+openai_api_key = "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"
 if not openai_api_key:
     raise ValueError("Please provide the OPENAI_API_KEY")
 
