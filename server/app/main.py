@@ -21,7 +21,8 @@ import os
 
 load_dotenv()
 
-openai_api_key = os.getenv("OPENAI_API_KEY")
+# openai_api_key = os.getenv("OPENAI_API_KEY")
+openai_api_key = "sk-8Bv-4-O3hQN4NG3RwZZNdtS2M36h4vwboVyU69Rnt2T3BlbkFJQLEyYHSZwTpbVwgzcnn1alc0vILfEOrIlNPUXisIQA"
 if not openai_api_key:
     raise ValueError("Please provide the OPENAI_API_KEY")
 
@@ -78,7 +79,7 @@ def create_recurring_chain(vectorStore):
 
     prompt = ChatPromptTemplate.from_messages([
     ("user", (
-        "If the user says any form for greeting like hi,hello,howdy,etc, respond in a friendly manner and ask 'How may i be of help to your mental health situation'"
+        "If the user says any form for greeting like hi,hello,howdy,etc, respond in a friendly manner"
         "If the user expresses any form of gratitude like thanks, thanks you, etc, respond saying 'You are welcome'"
         "If the user input or message or {input} does not relate to a mental health situation or case of cognitive distortion,tell the user that 'oops!!!! I am only interested in discussing your mental health situation' "
         "Answer the user's questions based on the context and make the answer short and stick with only conversations relating to cognitive distortion or mental health"
@@ -92,7 +93,7 @@ def create_recurring_chain(vectorStore):
         
         
         "Start the second identified cognitive distortion on a new line as well, followed by a colon and an explanation in one or two sentences.\n"
-        "Let every other response guide the user into suggestions for stress relief, tailored in line with the identified cognitive distortions"
+        "Let every other response guide the user in a friendly manner into stress relief without suggestions, tailored in line with the identified cognitive distortions"
         "If the user asks questions based on your answers, provide guidiance for stress relief"
         
         "Here we consider the following top 10 common thinking distortions in the order of:\n"
@@ -159,7 +160,7 @@ async def chat(request: ChatRequest):
     try:
         response = chain.invoke({
             "chat_history": chat_history,
-            "input": question,
+            "input": question, 
         })
         answer = response["answer"]
         
