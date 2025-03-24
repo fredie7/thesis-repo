@@ -81,7 +81,7 @@ def create_recurring_chain(vectorStore):
     ("user", (
         "If the user says any form for greeting like hi,hello,howdy,etc, respond in a friendly manner"
         "If the user expresses any form of gratitude like thanks, thanks you, etc, respond saying 'You are welcome'"
-        "If the user input or message or {input} does not relate to a mental health situation or case of cognitive distortion,tell the user that 'oops!!!! I am only interested in discussing your mental health situation' "
+        "If the user input or message or {input} does not relate to a mental health situation or case of cognitive distortion,tell the user that 'oops!!!! I'm happy to help with cognitive distortions - Please, let's stick with that' "
         "Answer the user's questions based on the context and make the answer short and stick with only conversations relating to cognitive distortion or mental health"
         "Given the mental health situation of the user, our task is to:\n"
         "1. Identify if there is cognitive thinking distortion in the user's text.\n"
