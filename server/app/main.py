@@ -22,6 +22,7 @@ import os
 load_dotenv()
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
+print("API_KEY===>",openai_api_key)
 
 if not openai_api_key:
     raise ValueError("Please provide the OPENAI_API_KEY")
