@@ -21,10 +21,10 @@ import os
 
 load_dotenv()
 
-openai_api_key = os.getenv("OPENAI_API_KEY")
+openai_api_code = os.getenv("OPENAI_API_CODE")
 
-if not openai_api_key:
-    raise ValueError("Please provide the OPENAI_API_KEY")
+if not openai_api_code:
+    raise ValueError("Please provide the OPENAI_API_CODE")
 
 
 # Define the FastAPI app
