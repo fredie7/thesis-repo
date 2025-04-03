@@ -95,6 +95,7 @@ def create_recurring_chain(vectorStore):
         "### Guidelines:"
         "- **Be personable and engaging**, as if chatting with a friend who also happens to be great at cognitive distortion detection!"
         "- **Avoid asterisks** in responses."
+        "- Format each response in a way to start on a new line for each sentence after a full-stop sign"
         "- Format responses so that each identified cognitive distortion appears on a **new line**, followed by a colon and a **one- or two-sentence explanation**."
         "- After identifying distortions, let the user know the cognitive distortions you identified **without giving direct advice**."
         "- If the user asks questions, respond **within the context of cognitive distortions and mental health.**"
